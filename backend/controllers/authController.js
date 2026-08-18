@@ -1,5 +1,7 @@
 const pool = require("../db");
 const bcrypt = require("bcrypt");
+const jwt  = require("jsonwebtoken");
+
 
 const registerUser = async (req, res) => {
     const client = await pool.connect();
@@ -89,6 +91,77 @@ const registerUser = async (req, res) => {
     }
 };
 
+
+const loginUser = async (req, res) => {
+
+    try{
+        const {
+                email,
+                password
+        } = req.body;
+
+        if(!email || !password){
+            return res.status(400).json({
+                message:"Email i password su obavezni"
+            });
+        }
+        
+        const result = await pool.query(
+            "SELECT * from users WHERE email = $1", [email]
+        );
+        if(result.rows.length === 0){
+            return res.status(401).json({
+                message:"Pogresan email ili password"
+            });
+        }
+
+        const user = result.rows[0];
+
+        const passwordIsValid = await bcrypt.compare(
+            password,
+            user.passwordhash
+        );
+        
+        if(!passwordIsValid) {
+            return res.status(401).json({
+                message: "Pogresan email ili password"
+            });
+        }
+
+        const token = jwt.sign(
+            {
+                userid: user.userid,
+                email: user.email
+            },
+
+            process.env.JWT_SECRET,
+            {
+                expiresIn: "1h"
+            }
+        );
+        res.status(200).json({
+            message: "Login je uspjesan",
+            token: token,
+            user: {
+                userid: user.userid,
+                firstname: user.firstname,
+                lastname: user.lastname,
+                email: user.email
+            }
+        });
+
+    }catch(err){
+        console.log(err);
+
+        res.status(500).json({
+            message: "Greska na serveru"
+        });
+
+    }
+
+};
+
+
 module.exports = {
-    registerUser
+    registerUser, loginUser
 };

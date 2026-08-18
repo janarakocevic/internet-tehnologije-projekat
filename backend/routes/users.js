@@ -4,8 +4,10 @@ const router = express.Router();
 const { 
     getAllUsers, getUserByID, updateUser, deleteUser
 } = require("../controllers/usersController");
+const authMiddleware = require("../middleware/authMiddleware");
 
-router.get("/", getAllUsers);
+
+router.get("/", authMiddleware, getAllUsers);
 
 router.get("/:id", getUserByID);
 
