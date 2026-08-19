@@ -5,14 +5,27 @@ const {
     getAllUsers, getUserByID, updateUser, deleteUser
 } = require("../controllers/usersController");
 const authMiddleware = require("../middleware/authMiddleware");
+const authorizeRoles = require("../middleware/roleMiddleware");
 
 
-router.get("/", authMiddleware, getAllUsers);
+router.get("/", 
+    authMiddleware,
+    authorizeRoles('Admin'), 
+    getAllUsers);
 
-router.get("/:id", getUserByID);
+router.get("/:id", 
+    authMiddleware,
+    authorizeRoles('Admin'),
+    getUserByID);
 
-router.put("/:id", updateUser);
+router.put("/:id", 
+    authMiddleware,
+    authorizeRoles('Admin'),
+    updateUser);
 
-router.delete("/:id", deleteUser);
+router.delete("/:id", 
+    authMiddleware,
+    authorizeRoles('Admin'),
+    deleteUser);
 
 module.exports = router ;

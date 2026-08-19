@@ -121,17 +121,28 @@ const loginUser = async (req, res) => {
             password,
             user.passwordhash
         );
-        
         if(!passwordIsValid) {
             return res.status(401).json({
                 message: "Pogresan email ili password"
             });
         }
+        
+        const roleResult = await pool.query(
+            `SELECT r.rolename
+            FROM roles r 
+            JOIN userroles ur on r.roleid = ur.roleid
+            WHERE ur.userid = $1` , [user.userid]
+        );
+        // jer moja baza dozvoljava da 1 korisnik ima vise uloga
+        const roles = roleResult.rows.map(row => row.rolename);
+        
+      
 
         const token = jwt.sign(
             {
                 userid: user.userid,
-                email: user.email
+                email: user.email,
+                roles: roles
             },
 
             process.env.JWT_SECRET,
@@ -146,7 +157,8 @@ const loginUser = async (req, res) => {
                 userid: user.userid,
                 firstname: user.firstname,
                 lastname: user.lastname,
-                email: user.email
+                email: user.email,
+                roles: roles
             }
         });
 

@@ -1,6 +1,9 @@
 const express = require("express");
 const router = express.Router();
 
+const authMiddleware = require("../middleware/authMiddleware");
+const authorizeRoles = require("../middleware/roleMiddleware");
+
 const {
     getAllProperties, getPropertyByID, updateProperty, deleteProperty
 } = require("../controllers/propertiesController");
@@ -9,8 +12,14 @@ router.get("/", getAllProperties);
 
 router.get("/:id", getPropertyByID);
 
-router.put("/:id", updateProperty);
+router.put("/:id",
+    authMiddleware,
+    authorizeRoles("Admin", "Agent"),
+    updateProperty);
 
-router.delete("/:id", deleteProperty);
+router.delete("/:id", 
+    authMiddleware,
+    authorizeRoles("Admin", "Agent"),
+    deleteProperty);
 
 module.exports = router;
