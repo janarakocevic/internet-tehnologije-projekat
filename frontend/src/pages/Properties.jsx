@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
+import api from "../services/api";
 import Navbar from "../components/Navbar";
 import PropertyList from "../components/PropertyList";
 
@@ -8,7 +8,7 @@ function Properties(){
     const [properties, setProperties] = useState([]);
 
     useEffect(() => {
-            axios.get("http://localhost:3000/properties")
+           api.get("/properties")
             .then((response) => {
                 setProperties(response.data);
             }).catch((error) => {

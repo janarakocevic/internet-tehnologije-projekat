@@ -1,5 +1,5 @@
 import { useState } from "react";
-import axios from "axios";
+import api from "../services/api";
 
 import Navbar from "../components/Navbar";
 
@@ -25,8 +25,8 @@ function Register(){
                 phone
             };
 
-            const response = await axios.post(
-                "http://localhost:3000/auth/register",
+            const response = await api.post(
+                "/auth/register",
                 data
             );
 

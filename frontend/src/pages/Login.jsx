@@ -1,11 +1,13 @@
 import { useState } from "react";
-import axios from "axios";
+import { useNavigate } from "react-router-dom";
+import api from "../services/api";
 import Navbar from "../components/Navbar";
 
 function Login(){
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [message, setMessage] = useState("");
+    const navigate = useNavigate();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -14,10 +16,15 @@ function Login(){
                 email, password
             };
 
-            const response = await axios.post(
-                "http://localhost:3000/auth/login",
+            const response = await api.post(
+                "/auth/login",
                 data
             );
+            localStorage.setItem("token", response.data.token);
+            localStorage.setItem("user", JSON.stringify(response.data.user));
+
+            navigate("/");
+
             setMessage(response.data.message);
         }catch(error){
             console.log(error);
