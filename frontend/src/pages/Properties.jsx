@@ -15,6 +15,9 @@ function Properties(){
     const [minArea, setMinArea] = useState("");
     const [rooms, setRooms] = useState("");
 
+    const [sortOption, setSortOption] = useState("");
+
+
     const handleSearch = async () => {
         try{
             if(!search.trim()) {
@@ -73,6 +76,28 @@ function Properties(){
         console.log(error);
     }
 };
+
+
+    const getSortedProperties = () => {
+        const sorted = [...properties];
+
+        if(sortOption === "price-asc"){
+            sorted.sort((a,b) => Number(a.price) - Number(b.price));
+        }
+        
+        if(sortOption === "price-desc"){
+            sorted.sort((a,b) => Number(b.price) - Number(a.price));
+        }
+        
+        if(sortOption === "area-asc"){
+            sorted.sort((a,b) => Number(a.area) - Number(b.area));
+        }
+        if(sortOption === "area-desc"){
+            sorted.sort((a,b) => Number(b.area) - Number(a.area));
+        }
+        return sorted;
+            
+    }
 
     useEffect(() => {
            api.get("/properties")
@@ -145,9 +170,34 @@ function Properties(){
                     Resetuj filtere
                 </button>                                 
             </div>
+            <br />
+            <div>
+                <label>Sortiraj: </label>
 
+                <select 
+                value={sortOption}
+                onChange={(e) => setSortOption(e.target.value)}>
+                   <option value="">Bez sortiranja</option>
+                <option value="price-asc">
+                    Cijena: rastuće
+                </option>
+                <option value="price-desc">
+                    Cijena: opadajuće
+                </option>
+                <option value="area-asc">
+                    Površina: rastuće
+                </option>
+                <option value="area-desc">
+                    Površina: opadajuće
+                </option>   
+                </select>
+            </div>
 
-            <PropertyList properties={properties} />
+        <p>
+            Pronađeno: {getSortedProperties().length} nekretnina
+        </p>
+
+            <PropertyList properties={getSortedProperties()} />
                     
         </div>
     );
