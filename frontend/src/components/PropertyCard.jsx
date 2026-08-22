@@ -1,4 +1,6 @@
-function PropertyCard({ title, price, area, rooms }){
+import { Link } from "react-router-dom";
+
+function PropertyCard({ propertyid, title, price, area, rooms }){
 
     return(
         <div>
@@ -6,6 +8,10 @@ function PropertyCard({ title, price, area, rooms }){
             <p>Cijena: {price} €</p>
             <p>Povrsina: {area} m²</p>
             <p>Broj soba: {rooms}</p>
+
+            <Link to={`/properties/${propertyid}`}>
+            Pogledaj detalje
+            </Link>
         </div>
     );
 }

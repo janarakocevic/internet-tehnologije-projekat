@@ -8,6 +8,7 @@ function PropertyList({ properties }){
             {properties.map((property) => (
                 <PropertyCard 
                 key = {property.propertyid}
+                propertyid = {property.propertyid}
                 title = {property.title}
                 price = {property.price}
                 area = {property.area}
